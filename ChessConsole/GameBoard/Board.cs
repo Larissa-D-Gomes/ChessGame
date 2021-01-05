@@ -18,7 +18,15 @@ namespace GameBoard
             this._pieces = new Piece[rows, columns];
         }
 
-        
+        // Methods 
 
+        /* Return a Piece from the private Piece matrix
+         * @param int row, int column
+         * @return return _pieces[row, column];
+         */
+        public Piece GetPiece(int row, int column)
+        {
+            return _pieces[row, column];
+        }
     }
 }

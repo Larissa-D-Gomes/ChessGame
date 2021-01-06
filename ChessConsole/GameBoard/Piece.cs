@@ -9,10 +9,10 @@
 
         // Constructor
 
-        // @param Position position, Color color, Board board
-        public Piece(Position position, Color color, Board board)
+        // @param Color color, Board board
+        public Piece(Color color, Board board)
         {
-            this.Position = position;
+            this.Position = null;
             this.Color = color;
             this.Board = board;
             this.MovementsCounter = 0;

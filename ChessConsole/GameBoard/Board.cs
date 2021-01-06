@@ -28,5 +28,14 @@ namespace GameBoard
         {
             return _pieces[row, column];
         }
+
+        /*  Insert a new Piece on the game board
+         *  @param Piece p, Position pos
+         */
+        public void InsertPiece(Piece p, Position pos)
+        {
+            _pieces[pos.Row, pos.Column] = p;
+            p.Position = pos;
+        }
     }
 }

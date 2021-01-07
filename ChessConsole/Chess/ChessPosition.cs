@@ -14,7 +14,7 @@ namespace Chess
         public ChessPosition(char column, int row)
         {
             this.Column = column;
-            this.Row = linha;
+            this.Row = row;
         }
 
         // Methods

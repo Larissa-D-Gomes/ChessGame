@@ -46,12 +46,12 @@ namespace GameBoard
         public bool HasPiece(Position pos)
         {
             ValidatePosition(pos);
-            return _pieces[pos.Row, pos.Column] != null;
+            return GetPiece(pos) != null;
         }
 
-        /*  Inserts a new Piece on the game board
-         *  Throws GameBoardException
-         *  @param Piece p, Position pos
+        /* Inserts a new Piece on the game board
+         * Throws GameBoardException
+         * @param Piece p, Position pos
          */
         public void InsertPiece(Piece p, Position pos)
         {
@@ -59,6 +59,21 @@ namespace GameBoard
                 throw new GameBoardException("There is already a piece in this position");
             _pieces[pos.Row, pos.Column] = p;
             p.Position = pos;
+        }
+
+        /* Removes a piece from the game board
+         * @param Position pos
+         * @return Piece Removed
+         */
+        public Piece RemovePiece(Position pos)
+        {
+            Piece p = GetPiece(pos);
+            if (p == null)
+                return null;
+
+            p.Position = null;
+            _pieces[pos.Row, pos.Column] = null;
+            return p;
         }
 
         /* Checks if a position is valid

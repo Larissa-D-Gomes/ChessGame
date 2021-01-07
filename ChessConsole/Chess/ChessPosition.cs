@@ -1,4 +1,5 @@
 ﻿using GameBoard;
+using System;
 
 namespace Chess
 {
@@ -23,7 +24,7 @@ namespace Chess
          */
         public Position ToPosition()
         {
-            return new Position(8 - this.Row, this.Column - 'a');
+            return new Position(8 - this.Row, Char.ToLower(this.Column) - 'a');
         }
 
         // ToString

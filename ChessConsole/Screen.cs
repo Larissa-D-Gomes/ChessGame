@@ -16,15 +16,36 @@ namespace ChessConsole
                 Console.Write(8 - i + " ");
                 for (int j = 0; j < board.Columns; j++)
                 {
-                    if (board.GetPiece(i, j) == null)
-                    {
-                        Console.Write("- ");
-                    }
-                    else
-                    {
-                        PrintPiece(board.GetPiece(i, j));
-                    }   
+                    PrintPiece(board.GetPiece(i, j));
+                       
                 }
+                Console.WriteLine();
+            }
+            Console.WriteLine("  A B C D E F G H");
+        }
+
+        /* Prints the chess game board 
+         * @param Board board, bool[,] possiblePos
+         */
+        public static void PrintBoard(Board board, bool[,] possiblePos)
+        {
+            ConsoleColor background = Console.BackgroundColor;
+            ConsoleColor newBackground = ConsoleColor.DarkRed;
+
+            for (int i = 0; i < board.Rows; i++)
+            {
+                Console.Write(8 - i + " ");
+                for (int j = 0; j < board.Columns; j++)
+                {
+                    if (possiblePos[i, j])
+                        Console.BackgroundColor = newBackground;
+                    else
+                        Console.BackgroundColor = background;
+
+                    PrintPiece(board.GetPiece(i, j));
+
+                }
+                Console.BackgroundColor = background;
                 Console.WriteLine();
             }
             Console.WriteLine("  A B C D E F G H");
@@ -35,17 +56,24 @@ namespace ChessConsole
          */
         public static void PrintPiece(Piece piece)
         {
-            if(piece.Color == Color.White)
+            if (piece == null)
             {
-                Console.Write(piece + " ");
+                Console.Write("- ");
             }
             else
             {
-                // New print color
-                ConsoleColor c = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(piece + " ");
-                Console.ForegroundColor = c;
+                if (piece.Color == Color.White)
+                {
+                    Console.Write(piece + " ");
+                }
+                else
+                {
+                    // New print color
+                    ConsoleColor c = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write(piece + " ");
+                    Console.ForegroundColor = c;
+                }
             }
         }
 

@@ -4,7 +4,7 @@ using Chess;
 
 namespace ChessConsole
 {
-    class Screen
+    class View
     {
         /* Prints the chess game board 
          * @param Board board

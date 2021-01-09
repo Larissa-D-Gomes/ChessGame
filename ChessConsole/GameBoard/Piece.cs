@@ -26,6 +26,30 @@
             this.MoveCounter++;
         }
 
+        /* Checks if a piece can move to a position
+         * @param Position pos
+         * @return bool GetPossibleMoves()[p.Row, p.Column]
+         */
+        public bool CanMoveTo(Position p)
+        {
+            return GetPossibleMoves()[p.Row, p.Column];
+        }
+
+        
+        /* Checks if a piece contains a possible move
+         * @return bool
+         */
+        public bool HasPossibleMoves()
+        {
+            bool[,] m = GetPossibleMoves();
+            for(int  i = 0; i < this.Board.Rows; i++)
+                for (int j = 0; j < this.Board.Rows; j++)
+                    if(m[i, j])
+                        return true;
+
+            return false;
+        }
+
         /* possible moves = true
          * @return bool[,]
          */

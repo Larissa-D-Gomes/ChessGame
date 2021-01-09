@@ -14,19 +14,34 @@ namespace ChessConsole
 
                 while (!cm.Finished)
                 {
-                    Console.Clear();
-                    Screen.PrintBoard(cm.Board);
+                    try
+                    {
+                        Console.Clear();
 
-                    Console.Write("\nFrom: ");
-                    Position from = Screen.ReadChessPosition().ToPosition();
+                        View.PrintBoard(cm.Board);
+                        Console.WriteLine("\nTurn: " + cm.Turn);
+                        Console.WriteLine("Waiting Next Move: " + cm.CurrentPlayer);
 
-                    bool[,] possiblePos = cm.Board.GetPiece(from).GetPossibleMoves();
-                    Console.Clear();
-                    Screen.PrintBoard(cm.Board, possiblePos);
+                        Console.Write("\nFrom: ");
+                        Position from = View.ReadChessPosition().ToPosition();
+                        cm.ValidateFromPosition(from);
 
-                    Console.Write("\nTo: ");
-                    Position to = Screen.ReadChessPosition().ToPosition();
-                    cm.Move(from, to);
+                        bool[,] possiblePos = cm.Board.GetPiece(from).GetPossibleMoves();
+                        Console.Clear();
+                        View.PrintBoard(cm.Board, possiblePos);
+                        Console.WriteLine("\nTurn: " + cm.Turn);
+                        Console.WriteLine("Waiting Next Move: " + cm.CurrentPlayer);
+
+                        Console.Write("\nTo: ");
+                        Position to = View.ReadChessPosition().ToPosition();
+                        cm.ValidateToPosition(from, to);
+                        cm.ExecuteMove(from, to);
+                    }
+                    catch(GameBoardException e)
+                    {
+                        Console.WriteLine("\n" + e.Message + "\nPress enter to continue...");
+                        Console.ReadLine();
+                    }
                 }
             }
             catch(GameBoardException e)

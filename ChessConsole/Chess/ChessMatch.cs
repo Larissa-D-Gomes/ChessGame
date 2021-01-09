@@ -5,16 +5,16 @@ namespace Chess
     class ChessMatch
     {
         public Board Board { get; private set; }
-        private int _turn;
-        private Color _currentPlayer;
+        public int Turn { get; private set; }
+        public Color CurrentPlayer { get; private set; }
         public bool Finished { get; private set;}
 
         // Constructor
         public ChessMatch()
         {
             this.Board = new Board(8, 8);
-            this._turn = 1;
-            this._currentPlayer = Color.White;
+            this.Turn = 1;
+            this.CurrentPlayer = Color.White;
             this.Finished = false;
             SetUpChessBoard();
         }
@@ -40,6 +40,14 @@ namespace Chess
             Board.InsertPiece(new King(Color.Black, Board), new ChessPosition('d', 8).ToPosition());
         }
 
+        private void SwitchPlayers()
+        {
+            if (this.CurrentPlayer == Color.Black)
+                this.CurrentPlayer = Color.White;
+            else
+                this.CurrentPlayer = Color.Black;
+        }
+
         /* Moves a chess Piece 
          */
         public void Move(Position from, Position to)
@@ -49,5 +57,41 @@ namespace Chess
             Piece removed = this.Board.RemovePiece(to);
             this.Board.InsertPiece(p, to);
         }
+
+        /* Executes a chess move*/
+        public void ExecuteMove(Position from, Position to)
+        {
+            Move(from, to);
+            this.Turn++;
+            SwitchPlayers();
+        }
+
+        /* Checks if the position FROM is valide\
+         * throws GameBoardException
+         * @param Position pos
+         */
+        public void ValidateFromPosition(Position pos)
+        {
+            Piece p = this.Board.GetPiece(pos);
+            if (p == null)
+                throw new GameBoardException("There is no piece in the chosen position!");
+
+            if(p.Color != this.CurrentPlayer)
+                throw new GameBoardException("The piece chosen is not yours!");
+
+            if(!p.HasPossibleMoves())
+                throw new GameBoardException("You cannot move the piece chosen!");
+        }
+
+        /* Checks if the position TO is valide
+         * throws GameBoardException
+         * @param Position from, Position to
+         */
+        public void ValidateToPosition(Position from, Position to)
+        {
+            if (!Board.GetPiece(from).CanMoveTo(to))
+                throw new GameBoardException("Invalid position!");
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GameBoard;
 using Chess;
 
@@ -6,6 +7,48 @@ namespace ChessConsole
 {
     class View
     {
+
+        /* Prints a chess match
+         * @param ChessMatch cm
+         */
+        public static void PrintMatch(ChessMatch cm)
+        {
+            PrintBoard(cm.Board);
+            PrintCapturedPieces(cm);
+            Console.WriteLine("\nTurn: " + cm.Turn);
+            Console.WriteLine("Next Move: " + cm.CurrentPlayer);
+        }
+
+        /* Prints captured pieces 
+         * @param ChessMatch cm
+         */
+        public static void PrintCapturedPieces(ChessMatch cm)
+        {
+            Console.WriteLine("\nCaptured Pieces:");
+
+            Console.Write("White: ");
+            PrintCollection(cm.CapturedPieces(Color.White));
+
+            Console.Write("\nBlack: ");
+            ConsoleColor aux = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            PrintCollection(cm.CapturedPieces(Color.Black));
+            Console.WriteLine();
+            Console.ForegroundColor = aux;
+        }
+
+        /* Prints a piece HashSet
+         * @param HashSet<Piece> p
+         */
+        public static void PrintCollection(HashSet<Piece> p)
+        {
+            Console.Write("[ ");
+            foreach (Piece piece in p)
+                Console.Write(piece + " ");
+
+            Console.Write("]");
+        }
+
         /* Prints the chess game board 
          * @param Board board
          */

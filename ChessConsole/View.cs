@@ -16,11 +16,23 @@ namespace ChessConsole
             PrintBoard(cm.Board);
             PrintCapturedPieces(cm);
             Console.WriteLine("\nTurn: " + cm.Turn);
-            Console.WriteLine("Next Move: " + cm.CurrentPlayer);
 
-            if (cm.Check)
+            if (!cm.Finished)
             {
-                Console.WriteLine("CHECK");
+                Console.WriteLine("Next Move: " + cm.CurrentPlayer);
+
+                if (cm.Check)
+                {
+                    ConsoleColor aux = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("CHECK!");
+                    Console.ForegroundColor = aux;
+                }
+            }
+            else
+            {
+                Console.WriteLine("CHECKMATE!");
+                Console.WriteLine("Winner: "+ cm.CurrentPlayer);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GameBoard;
 
 namespace Chess
@@ -105,6 +106,37 @@ namespace Chess
             return false;
         }
 
+        /* Tests if a king is in checkmate*/
+        public bool IsInCheckmate(Color color)
+        {
+            if (!IsInCheck(color))
+                return false;
+
+            foreach(Piece x in GamePieces(color))
+            {
+                bool[,] m = x.GetPossibleMoves();
+
+                for(int i = 0; i < this.Board.Rows; i++)
+                {
+                    for(int j = 0; j < this.Board.Columns; j++)
+                    {
+                        if(m[i, j])
+                        {
+                            Position from = x.Position;
+                            Position to = new Position(i, j);
+                            Piece captured = Move(from, to);
+                            bool check = IsInCheck(color);
+                            UndoMove(from, to, captured);
+                            
+                            if (!check)
+                                return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
         /* Returns a HashSet that contains the captured pieces of a color
          */
         public HashSet<Piece> CapturedPieces(Color color)
@@ -162,7 +194,7 @@ namespace Chess
             if (captured != null)
                 this._captured.Add(captured);
 
-            return p;
+            return captured;
         }
 
         /* Executes a chess move*/
@@ -184,12 +216,20 @@ namespace Chess
                 this.Check = false;
             }
 
-            this.Turn++;
-            SwitchPlayers();
+            if (IsInCheckmate(Opponent(CurrentPlayer)))
+            {
+                this.Finished = true;
+            }
+            else
+            {
+                this.Turn++;
+                SwitchPlayers();
+            }
         }
 
         public void UndoMove(Position from, Position to, Piece captured)
         {
+            
             Piece p = this.Board.RemovePiece(to);
             p.DecreaseMoveCounter();
 

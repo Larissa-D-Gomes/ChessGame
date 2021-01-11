@@ -28,7 +28,7 @@ namespace ChessConsole
                         Console.Clear();
                         View.PrintBoard(cm.Board, possiblePos);
                         Console.WriteLine("\nTurn: " + cm.Turn);
-                        Console.WriteLine("Waiting Next Move: " + cm.CurrentPlayer);
+                        Console.WriteLine("Next Move: " + cm.CurrentPlayer);
 
                         Console.Write("\nTo: ");
                         Position to = View.ReadChessPosition().ToPosition();

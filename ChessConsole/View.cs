@@ -17,6 +17,11 @@ namespace ChessConsole
             PrintCapturedPieces(cm);
             Console.WriteLine("\nTurn: " + cm.Turn);
             Console.WriteLine("Next Move: " + cm.CurrentPlayer);
+
+            if (cm.Check)
+            {
+                Console.WriteLine("CHECK");
+            }
         }
 
         /* Prints captured pieces 

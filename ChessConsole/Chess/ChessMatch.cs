@@ -9,6 +9,7 @@ namespace Chess
         public int Turn { get; private set; }
         public Color CurrentPlayer { get; private set; }
         public bool Finished { get; private set;}
+        public bool Check { get; private set; }
         private HashSet<Piece> _pieces;
         private HashSet<Piece> _captured;
 
@@ -19,6 +20,7 @@ namespace Chess
             this.Turn = 1;
             this.CurrentPlayer = Color.White;
             this.Finished = false;
+            this.Check = false;
 
             this._pieces = new HashSet<Piece>();
             this._captured = new HashSet<Piece>();
@@ -47,7 +49,33 @@ namespace Chess
             InsertNewPiece('d', 8, new King(Color.Black, Board));
         }
 
+        /* Returns the opponent's color
+         * @param Color color
+         * @return Color
+         */
+        private Color Opponent(Color color)
+        {
+            if (color == Color.White)
+                return Color.Black;
+            else
+                return Color.White;
+        }
+        /* Returns a king 
+         * Piece king
+         */
+        private Piece GetKing(Color color)
+        {
+            foreach( Piece c in GamePieces(color))
+            {
+                if(c is King)
+                {
+                    return c;
+                }
+            }
+            return null;
+        }
 
+        /* Switches the current player */
         private void SwitchPlayers()
         {
             if (this.CurrentPlayer == Color.Black)
@@ -56,7 +84,28 @@ namespace Chess
                 this.CurrentPlayer = Color.Black;
         }
 
-        /* Return a HashSet that contains the captured pieces of a color
+
+        /* Checks if a king is in check
+         * @param Color color
+         * @return bool
+         */
+        public bool IsInCheck(Color color)
+        {
+            Piece king = GetKing(color);
+
+            if (king == null)
+                throw new GameBoardException("There is not a " + color + " king on the game board." );
+
+            foreach(Piece x in GamePieces(Opponent(color)))
+            {
+                bool[,] m = x.GetPossibleMoves();
+                if (m[king.Position.Row, king.Position.Column])
+                    return true;
+            }
+            return false;
+        }
+
+        /* Returns a HashSet that contains the captured pieces of a color
          */
         public HashSet<Piece> CapturedPieces(Color color)
         {
@@ -100,8 +149,10 @@ namespace Chess
         }
 
         /* Moves a chess Piece 
+         * @param Position from, Position to
+         * @return Piece p
          */
-        public void Move(Position from, Position to)
+        public Piece Move(Position from, Position to)
         {
             Piece p = this.Board.RemovePiece(from);
             p.IncreaseMoveCounter();
@@ -110,14 +161,45 @@ namespace Chess
 
             if (captured != null)
                 this._captured.Add(captured);
+
+            return p;
         }
 
         /* Executes a chess move*/
         public void ExecuteMove(Position from, Position to)
         {
-            Move(from, to);
+            Piece captured = Move(from, to);
+            if (IsInCheck(CurrentPlayer))
+            {
+                UndoMove(from, to, captured);
+                throw new GameBoardException("You cannot put yourself in check.");
+            }
+
+            if (IsInCheck(Opponent(CurrentPlayer)))
+            {
+                this.Check = true;
+            }
+            else
+            {
+                this.Check = false;
+            }
+
             this.Turn++;
             SwitchPlayers();
+        }
+
+        public void UndoMove(Position from, Position to, Piece captured)
+        {
+            Piece p = this.Board.RemovePiece(to);
+            p.DecreaseMoveCounter();
+
+            if (captured != null)
+            {
+                this.Board.InsertPiece(captured, to);
+                this._captured.Remove(captured);            
+            }
+            this.Board.InsertPiece(p, from);
+
         }
 
         /* Checks if the position FROM is valide\

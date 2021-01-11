@@ -20,10 +20,16 @@
 
         // Methods
 
-        // Increase the MoveCounter by one
+        // Increases the MoveCounter by one
         public void IncreaseMoveCounter()
         {
             this.MoveCounter++;
+        }
+
+        // Decreases the MoveCounter by one
+        public void DecreaseMoveCounter()
+        {
+            this.MoveCounter--;
         }
 
         /* Checks if a piece can move to a position

@@ -71,32 +71,51 @@ namespace ChessConsole
          */
         public static void PrintBoard(Board board)
         {
-            for( int i = 0; i < board.Rows; i++)
+            ConsoleColor backgroundOriginal = Console.BackgroundColor;
+            ConsoleColor background = ConsoleColor.DarkRed;
+            ConsoleColor newBackground = ConsoleColor.Green;
+            for ( int i = 0; i < board.Rows; i++)
             {
                 Console.Write(8 - i + " ");
+                background = SwitchBackgroung(background);
                 for (int j = 0; j < board.Columns; j++)
                 {
+                    Console.BackgroundColor = SwitchBackgroung(background);
+                    background = Console.BackgroundColor;
                     PrintPiece(board.GetPiece(i, j));
                        
                 }
+                Console.BackgroundColor = backgroundOriginal;
                 Console.WriteLine();
             }
             Console.WriteLine("  A B C D E F G H");
         }
+
+        public static ConsoleColor SwitchBackgroung(ConsoleColor c)
+        {
+            if (c == ConsoleColor.DarkRed)
+                return ConsoleColor.DarkGray;
+            else
+                return ConsoleColor.DarkRed;
+        } 
 
         /* Prints the chess game board 
          * @param Board board, bool[,] possiblePos
          */
         public static void PrintBoard(Board board, bool[,] possiblePos)
         {
-            ConsoleColor background = Console.BackgroundColor;
-            ConsoleColor newBackground = ConsoleColor.DarkRed;
+            ConsoleColor backgroundOriginal = Console.BackgroundColor;
+            ConsoleColor background = ConsoleColor.DarkRed;
+            ConsoleColor newBackground = ConsoleColor.Green;
 
             for (int i = 0; i < board.Rows; i++)
             {
                 Console.Write(8 - i + " ");
+                background = SwitchBackgroung(background);
                 for (int j = 0; j < board.Columns; j++)
                 {
+                    Console.BackgroundColor = SwitchBackgroung(background);
+                    background = Console.BackgroundColor;
                     if (possiblePos[i, j])
                         Console.BackgroundColor = newBackground;
                     else
@@ -105,7 +124,7 @@ namespace ChessConsole
                     PrintPiece(board.GetPiece(i, j));
 
                 }
-                Console.BackgroundColor = background;
+                Console.BackgroundColor = backgroundOriginal;
                 Console.WriteLine();
             }
             Console.WriteLine("  A B C D E F G H");
@@ -118,7 +137,7 @@ namespace ChessConsole
         {
             if (piece == null)
             {
-                Console.Write("- ");
+                Console.Write("  ");
             }
             else
             {
@@ -128,9 +147,9 @@ namespace ChessConsole
                 }
                 else
                 {
-                    // New print color
+                    //print 
                     ConsoleColor c = Console.ForegroundColor;
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Black;
                     Console.Write(piece + " ");
                     Console.ForegroundColor = c;
                 }

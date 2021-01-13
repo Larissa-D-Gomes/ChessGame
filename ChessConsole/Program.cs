@@ -27,6 +27,7 @@ namespace ChessConsole
                         bool[,] possiblePos = cm.Board.GetPiece(from).GetPossibleMoves();
                         Console.Clear();
                         View.PrintBoard(cm.Board, possiblePos);
+                        View.PrintCapturedPieces(cm);
                         Console.WriteLine("\nTurn: " + cm.Turn);
                         Console.WriteLine("Next Move: " + cm.CurrentPlayer);
 
@@ -40,6 +41,11 @@ namespace ChessConsole
                         Console.WriteLine("\n" + e.Message + "\nPress enter to continue...");
                         Console.ReadLine();
                     }
+                    catch (IndexOutOfRangeException e)
+                    {
+                        Console.WriteLine("\n" + "Invalid Position!" + "\nPress enter to continue...");
+                        Console.ReadLine();
+                    }
                 }
                 Console.Clear();
                 View.PrintMatch(cm);
@@ -48,6 +54,7 @@ namespace ChessConsole
             {
                 Console.WriteLine(e.Message);
             }
+            
         }
     }
 }

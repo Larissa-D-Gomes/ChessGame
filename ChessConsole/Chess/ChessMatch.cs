@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ChessConsole;
 using GameBoard;
 
 namespace Chess
@@ -275,6 +276,67 @@ namespace Chess
                 throw new GameBoardException("You cannot put yourself in check.");
             }
 
+            Piece p = this.Board.GetPiece(to);
+
+            /*** Promotion ***/
+            if(p is Pawn)
+            {
+                if ((p.Color == Color.White && to.Row == 0) ||
+                   (p.Color == Color.Black && to.Row == 7))
+                {
+                    p = this.Board.RemovePiece(to);
+                    this._pieces.Remove(p);
+                    bool wrong = true;
+                    Piece np = null;
+
+                    do
+                    {
+                        Console.Clear();
+                        View.PrintMatch(this, null);
+                        Console.WriteLine("PROMOTION\n" +
+                                          "Knight [N/n]\n" +
+                                          "Rook   [R/r]\n" +
+                                          "Bishop [B/b]\n" +
+                                          "Queen  [Q/q]\n" +
+                                          "Choose a piece: ");
+                        string c = Console.ReadLine();
+
+                        switch (c.ToUpper())
+                        {
+                            case "N":
+                                np = new Knight(p.Color, this.Board);
+                                wrong = false;
+                                break;
+
+                            case "R":
+                                np = new Rook(p.Color, this.Board);
+                                wrong = false;
+                                break;
+
+                            case "B":
+                                np = new Bishop(p.Color, this.Board);
+                                wrong = false;
+                                break;
+
+                            case "Q": 
+                                np = new Queen(p.Color, this.Board);
+                                wrong = false;
+                                break;
+                            
+                            default:
+                                Console.WriteLine("Invalid Piece!" + "\nPress enter to continue...");
+                                Console.ReadLine();
+                                wrong = true;
+                                break;
+                        }
+                    } while (wrong);
+
+                    this.Board.InsertPiece(np, to);
+                    this._pieces.Add(np);
+                                        
+                }
+            }
+
             if (IsInCheck(Opponent(CurrentPlayer)))
             {
                 this.Check = true;
@@ -293,8 +355,6 @@ namespace Chess
                 this.Turn++;
                 SwitchPlayers();
             }
-
-            Piece p = this.Board.GetPiece(to);
 
             /*** En Passant ***/
             if (p is Pawn && (to.Row == from.Row - 2 || to.Row == from.Row + 2))
@@ -366,7 +426,7 @@ namespace Chess
                 throw new GameBoardException("There is no piece in the chosen position!");
 
             if(p.Color != this.CurrentPlayer)
-                throw new GameBoardException("The chosen piece is not yours!");
+                throw new GameBoardException("The piece chosen is not yours!");
 
             if(!p.HasPossibleMoves())
                 throw new GameBoardException("You cannot move the chosen piece!");

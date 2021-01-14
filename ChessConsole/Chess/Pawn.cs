@@ -4,20 +4,21 @@ namespace Chess
 {
     class Pawn : Piece
     {
+        private ChessMatch _chessMatch;
         //Constructor
 
         // @param Color color, Board board
-        public Pawn(Color color, Board board) : base(color, board)
+        public Pawn(Color color, Board board, ChessMatch chessMatch) : base(color, board)
         {
-
+            this._chessMatch = chessMatch;
         }
 
         //Methods
-        /* Check if there is an enemy 
+        /* Check if there is an Opponent
          * @param Position pos
          * @return bool
          */
-        private bool HasEnemy(Position pos)
+        private bool HasOpponent(Position pos)
         {
             Piece p = this.Board.GetPiece(pos);
             return p != null && p.Color != this.Color;
@@ -62,12 +63,32 @@ namespace Chess
                     m[pos.Row, pos.Column] = true;
 
                 pos = new Position(this.Position.Row - 1, this.Position.Column - 1);
-                if (this.Board.IsValid(pos) && HasEnemy(pos))
+                if (this.Board.IsValid(pos) && HasOpponent(pos))
                     m[pos.Row, pos.Column] = true;
 
                 pos = new Position(this.Position.Row - 1, this.Position.Column + 1);
-                if (this.Board.IsValid(pos) && HasEnemy(pos))
+                if (this.Board.IsValid(pos) && HasOpponent(pos))
                     m[pos.Row, pos.Column] = true;
+
+                //*** En Passant ***//
+                if(this.Position.Row == 3)
+                {
+                    Position left = new Position(this.Position.Row, this.Position.Column - 1);
+
+                    if(this.Board.IsValid(left) && HasOpponent(left) 
+                        && this.Board.GetPiece(left) == _chessMatch.EnPassant)
+                    {
+                        m[left.Row - 1, left.Column] = true;
+                    }
+
+                    Position right = new Position(this.Position.Row, this.Position.Column + 1);
+
+                    if (this.Board.IsValid(left) && HasOpponent(right)
+                        && this.Board.GetPiece(left) == _chessMatch.EnPassant)
+                    {
+                        m[right.Row - 1, right.Column] = true;
+                    }
+                }
             }
             else
             {
@@ -80,12 +101,32 @@ namespace Chess
                     m[pos.Row, pos.Column] = true;
 
                 pos = new Position(this.Position.Row + 1, this.Position.Column - 1);
-                if (this.Board.IsValid(pos) && HasEnemy(pos))
+                if (this.Board.IsValid(pos) && HasOpponent(pos))
                     m[pos.Row, pos.Column] = true;
 
                 pos = new Position(this.Position.Row + 1, this.Position.Column + 1);
-                if (this.Board.IsValid(pos) && HasEnemy(pos))
+                if (this.Board.IsValid(pos) && HasOpponent(pos))
                     m[pos.Row, pos.Column] = true;
+
+                //*** En Passant ***//
+                if (this.Position.Row == 4)
+                {
+                    Position left = new Position(this.Position.Row, this.Position.Column - 1);
+
+                    if (this.Board.IsValid(left) && HasOpponent(left)
+                        && this.Board.GetPiece(left) == _chessMatch.EnPassant)
+                    {
+                        m[left.Row + 1, left.Column] = true;
+                    }
+
+                    Position right = new Position(this.Position.Row, this.Position.Column + 1);
+
+                    if (this.Board.IsValid(right) && HasOpponent(right)
+                        && this.Board.GetPiece(right) == _chessMatch.EnPassant)
+                    {
+                        m[right.Row + 1, right.Column] = true;
+                    }
+                }
             }
             return m;
         }

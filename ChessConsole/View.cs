@@ -11,15 +11,32 @@ namespace ChessConsole
         /* Prints a chess match
          * @param ChessMatch cm
          */
-        public static void PrintMatch(ChessMatch cm)
+        public static void PrintMatch(ChessMatch cm, bool[,] m)
         {
-            PrintBoard(cm.Board);
+            if(m == null)
+                PrintBoard(cm.Board);
+            else
+                PrintBoard(cm.Board, m);
+
             PrintCapturedPieces(cm);
             Console.WriteLine("\nTurn: " + cm.Turn);
 
             if (!cm.Finished)
             {
-                Console.WriteLine("Next Move: " + cm.CurrentPlayer);
+                Console.Write("Next Move: ");
+
+                if(cm.CurrentPlayer == Color.Black)
+                {
+                    ConsoleColor aux = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine(cm.CurrentPlayer);
+                    Console.ForegroundColor = aux;
+                }
+                else
+                {
+                    Console.WriteLine(cm.CurrentPlayer);
+                }
+
 
                 if (cm.Check)
                 {
@@ -31,7 +48,11 @@ namespace ChessConsole
             }
             else
             {
+                ConsoleColor aux = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("CHECKMATE!");
+                Console.ForegroundColor = aux;
+
                 Console.WriteLine("Winner: "+ cm.CurrentPlayer);
             }
         }
@@ -48,7 +69,7 @@ namespace ChessConsole
 
             Console.Write("\nBlack: ");
             ConsoleColor aux = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             PrintCollection(cm.CapturedPieces(Color.Black));
             Console.WriteLine();
             Console.ForegroundColor = aux;
@@ -72,8 +93,7 @@ namespace ChessConsole
         public static void PrintBoard(Board board)
         {
             ConsoleColor backgroundOriginal = Console.BackgroundColor;
-            ConsoleColor background = ConsoleColor.DarkRed;
-            ConsoleColor newBackground = ConsoleColor.Green;
+            ConsoleColor background = ConsoleColor.DarkGray;
             for ( int i = 0; i < board.Rows; i++)
             {
                 Console.Write(8 - i + " ");
@@ -105,7 +125,7 @@ namespace ChessConsole
         public static void PrintBoard(Board board, bool[,] possiblePos)
         {
             ConsoleColor backgroundOriginal = Console.BackgroundColor;
-            ConsoleColor background = ConsoleColor.DarkRed;
+            ConsoleColor background = ConsoleColor.DarkGray;
             ConsoleColor newBackground = ConsoleColor.Green;
 
             for (int i = 0; i < board.Rows; i++)

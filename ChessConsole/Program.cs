@@ -17,19 +17,17 @@ namespace ChessConsole
                     try
                     {
                         Console.Clear();
-
-                        View.PrintMatch(cm);
+                        bool[,] possiblePos = null;
+                        View.PrintMatch(cm, possiblePos);
 
                         Console.Write("\nFrom: ");
                         Position from = View.ReadChessPosition().ToPosition();
                         cm.ValidateFromPosition(from);
 
-                        bool[,] possiblePos = cm.Board.GetPiece(from).GetPossibleMoves();
+                        possiblePos = cm.Board.GetPiece(from).GetPossibleMoves();
+
                         Console.Clear();
-                        View.PrintBoard(cm.Board, possiblePos);
-                        View.PrintCapturedPieces(cm);
-                        Console.WriteLine("\nTurn: " + cm.Turn);
-                        Console.WriteLine("Next Move: " + cm.CurrentPlayer);
+                        View.PrintMatch(cm, possiblePos);
 
                         Console.Write("\nTo: ");
                         Position to = View.ReadChessPosition().ToPosition();
@@ -48,7 +46,7 @@ namespace ChessConsole
                     }
                 }
                 Console.Clear();
-                View.PrintMatch(cm);
+                View.PrintMatch(cm, null);
             }
             catch(GameBoardException e)
             {

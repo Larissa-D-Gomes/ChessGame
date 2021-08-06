@@ -6,6 +6,7 @@ namespace ChessConsole
 {
     class Program
     {
+        // Test commit
         static void Main(string[] args)
         {
             try

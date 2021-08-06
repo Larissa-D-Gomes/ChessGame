@@ -6,7 +6,7 @@ namespace ChessConsole
 {
     class Program
     {
-        // Test two
+        // Test three
         static void Main(string[] args)
         {
             try

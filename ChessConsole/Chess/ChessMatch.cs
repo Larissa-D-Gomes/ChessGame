@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ChessConsole;
+using ChessConsole.Helpers;
 using GameBoard;
 
 namespace Chess
@@ -16,10 +17,41 @@ namespace Chess
 
         private HashSet<Piece> _pieces;
         private HashSet<Piece> _captured;
-        
 
-        // Constructor
-        public ChessMatch()
+        private char[] files;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="gameType">What chess game mode the user wants to play</param>
+        public ChessMatch(int gameType)
+        {
+            if (gameType == 0) { Finished = true; return; } // 0 is exit
+
+            init();
+            switch (gameType)
+            {
+                case 1:
+                    SetUpChessBoardTraditional();
+                    break;
+                case 2:
+                    SetUpChess960();
+                    break;
+               //case 3:
+               //    SomeOtherGameMode()...
+               //    break;
+
+                default:
+                    IO.SetError("Oh no! Something went wrong, this shouldn't have happened.", "Press any key to try again.");
+                    break;
+            }
+            
+        }
+
+        /// <summary>
+        /// Initializing necessary things for chess match
+        /// </summary>
+        private void init()
         {
             this.Board = new Board(8, 8);
             this.Turn = 1;
@@ -30,24 +62,16 @@ namespace Chess
 
             this._pieces = new HashSet<Piece>();
             this._captured = new HashSet<Piece>();
-            
-            SetUpChessBoard();
+
+            files = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
         }
 
-        // Methods
-
-        /* private method to set up the chessboard
-         */
-        private void SetUpChessBoard()
+        /// <summary>
+        /// Most chess variants don't alter rows 2 or 7 so can just call this method instead of repeating code
+        /// </summary>
+        private void SetUpRows2And7()
         {
-            InsertNewPiece('a', 1, new Rook(Color.White, Board));
-            InsertNewPiece('b', 1, new Knight(Color.White, Board));
-            InsertNewPiece('c', 1, new Bishop(Color.White, Board));
-            InsertNewPiece('d', 1, new Queen(Color.White, Board));
-            InsertNewPiece('e', 1, new King(Color.White, Board, this));
-            InsertNewPiece('f', 1, new Bishop(Color.White, Board));
-            InsertNewPiece('g', 1, new Knight(Color.White, Board));
-            InsertNewPiece('h', 1, new Rook(Color.White, Board));
+            // Row 2
             InsertNewPiece('a', 2, new Pawn(Color.White, Board, this));
             InsertNewPiece('b', 2, new Pawn(Color.White, Board, this));
             InsertNewPiece('c', 2, new Pawn(Color.White, Board, this));
@@ -57,14 +81,7 @@ namespace Chess
             InsertNewPiece('g', 2, new Pawn(Color.White, Board, this));
             InsertNewPiece('h', 2, new Pawn(Color.White, Board, this));
 
-            InsertNewPiece('a', 8, new Rook(Color.Black, Board));
-            InsertNewPiece('b', 8, new Knight(Color.Black, Board));
-            InsertNewPiece('c', 8, new Bishop(Color.Black, Board));
-            InsertNewPiece('d', 8, new Queen(Color.Black, Board));
-            InsertNewPiece('e', 8, new King(Color.Black, Board, this));
-            InsertNewPiece('f', 8, new Bishop(Color.Black, Board));
-            InsertNewPiece('g', 8, new Knight(Color.Black, Board));
-            InsertNewPiece('h', 8, new Rook(Color.Black, Board));
+            // Row 7
             InsertNewPiece('a', 7, new Pawn(Color.Black, Board, this));
             InsertNewPiece('b', 7, new Pawn(Color.Black, Board, this));
             InsertNewPiece('c', 7, new Pawn(Color.Black, Board, this));
@@ -74,6 +91,44 @@ namespace Chess
             InsertNewPiece('g', 7, new Pawn(Color.Black, Board, this));
             InsertNewPiece('h', 7, new Pawn(Color.Black, Board, this));
         }
+
+        // Methods
+
+        /* private method to set up the chessboard
+         */
+        private void SetUpChessBoardTraditional()
+        {
+            SetUpRows2And7();
+
+            // Row 1
+            InsertNewPiece('a', 1, new Rook(Color.White, Board));
+            InsertNewPiece('b', 1, new Knight(Color.White, Board));
+            InsertNewPiece('c', 1, new Bishop(Color.White, Board));
+            InsertNewPiece('d', 1, new Queen(Color.White, Board));
+            InsertNewPiece('e', 1, new King(Color.White, Board, this));
+            InsertNewPiece('f', 1, new Bishop(Color.White, Board));
+            InsertNewPiece('g', 1, new Knight(Color.White, Board));
+            InsertNewPiece('h', 1, new Rook(Color.White, Board));
+            
+            // Row 2
+            InsertNewPiece('a', 8, new Rook(Color.Black, Board));
+            InsertNewPiece('b', 8, new Knight(Color.Black, Board));
+            InsertNewPiece('c', 8, new Bishop(Color.Black, Board));
+            InsertNewPiece('d', 8, new Queen(Color.Black, Board));
+            InsertNewPiece('e', 8, new King(Color.Black, Board, this));
+            InsertNewPiece('f', 8, new Bishop(Color.Black, Board));
+            InsertNewPiece('g', 8, new Knight(Color.Black, Board));
+            InsertNewPiece('h', 8, new Rook(Color.Black, Board));
+
+        }
+
+        private void SetUpChess960()
+        {
+            SetUpRows2And7();
+
+
+        }
+
 
         /* Returns the opponent's color
          * @param Color color

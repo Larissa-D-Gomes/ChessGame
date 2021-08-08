@@ -11,14 +11,14 @@ namespace Chess
         public Board Board { get; private set; }
         public int Turn { get; private set; }
         public Color CurrentPlayer { get; private set; }
-        public bool Finished { get; private set;}
+        public bool Finished { get; private set; }
         public bool Check { get; private set; }
         public Piece EnPassant { get; private set; }
 
         private HashSet<Piece> _pieces;
         private HashSet<Piece> _captured;
 
-        private char[] files;
+        private char[] _files;
 
         /// <summary>
         /// Constructor
@@ -28,7 +28,7 @@ namespace Chess
         {
             if (gameType == 0) { Finished = true; return; } // 0 is exit
 
-            init();
+            Init();
             switch (gameType)
             {
                 case 1:
@@ -37,21 +37,21 @@ namespace Chess
                 case 2:
                     SetUpChess960();
                     break;
-               //case 3:
-               //    SomeOtherGameMode()...
-               //    break;
+                //case 3:
+                //    SomeOtherGameMode()...
+                //    break;
 
                 default:
                     IO.SetError("Oh no! Something went wrong, this shouldn't have happened.", "Press any key to try again.");
                     break;
             }
-            
+
         }
 
         /// <summary>
         /// Initializing necessary things for chess match
         /// </summary>
-        private void init()
+        private void Init()
         {
             this.Board = new Board(8, 8);
             this.Turn = 1;
@@ -63,7 +63,7 @@ namespace Chess
             this._pieces = new HashSet<Piece>();
             this._captured = new HashSet<Piece>();
 
-            files = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+            _files = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Chess
             InsertNewPiece('f', 1, new Bishop(Color.White, Board));
             InsertNewPiece('g', 1, new Knight(Color.White, Board));
             InsertNewPiece('h', 1, new Rook(Color.White, Board));
-            
+
             // Row 2
             InsertNewPiece('a', 8, new Rook(Color.Black, Board));
             InsertNewPiece('b', 8, new Knight(Color.Black, Board));
@@ -125,7 +125,124 @@ namespace Chess
         private void SetUpChess960()
         {
             SetUpRows2And7();
+            Chess960Randomizer(1, Color.White); // Randomize white side
+            Chess960Randomizer(8, Color.Black); // Randomize black side
+        }
 
+        void Chess960Randomizer(int row, Color color)
+        {
+
+            var pcs = new char[] { 'r', 'r', 'K', 'b', 'b', 'k', 'k', 'q' };
+            var files = new List<char>() { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+            int rook1File = -1;
+            int rook2File = -1;
+            int bishop1File = -1;
+            bool invalid = true;
+            int randFile = -1;
+
+            foreach (char piece in pcs)
+            {
+                do
+                {
+                    randFile = new Random().Next(0, files.Count);
+                } while (files[randFile] == 'x');
+                switch (piece)
+                {
+                    case 'r':
+                        if (rook1File == -1)
+                        {
+                            InsertNewPiece(files[randFile], row, new Rook(color, Board));
+                            rook1File = randFile;
+                            files[randFile] = 'x';
+                        }
+                        else
+                        {
+                            invalid = true;
+                            do
+                            {
+                                if (Math.Abs(randFile - rook1File) > 1 && files[randFile] != 'x')
+                                {
+                                    InsertNewPiece(files[randFile], row, new Rook(color, Board));
+                                    rook2File = randFile;
+                                    files[randFile] = 'x';
+                                    invalid = false;
+                                }
+                                else { randFile = new Random().Next(0, files.Count); }
+
+                            } while (invalid);
+                        }
+                        break;
+
+                    case 'K':
+                        invalid = true;
+                        do
+                        {
+                            if (files[randFile] != 'x' && (randFile > rook1File && randFile < rook2File) || (randFile > rook2File && randFile < rook1File))
+                            {
+                                InsertNewPiece(files[randFile], row, new King(color, Board, this));
+                                files[randFile] = 'x';
+                                invalid = false;
+                            }
+                            else { randFile = new Random().Next(0, files.Count); }
+                        } while (invalid);
+                        break;
+
+                    case 'b':
+                        if (bishop1File == -1)
+                        {
+                            if (files[randFile] != 'x')
+                            {
+                                InsertNewPiece(files[randFile], row, new Bishop(color, Board));
+                                bishop1File = randFile;
+                                files[randFile] = 'x';
+                            }
+                        }
+                        else
+                        {
+                            bool b1Odd = bishop1File % 2 == 0 ? false : true;
+                            invalid = true;
+                            do
+                            {
+                                if (files[randFile] != 'x' && (b1Odd && randFile % 2 == 0) || (!b1Odd && randFile % 2 != 0))
+                                {
+                                    InsertNewPiece(files[randFile], row, new Bishop(color, Board));
+                                    files[randFile] = 'x';
+                                    invalid = false;
+                                }
+                                else { randFile = new Random().Next(0, files.Count); }
+                            } while (invalid);
+                        }
+                        break;
+                    case 'k':
+                        invalid = true;
+                        do
+                        {
+                            if (files[randFile] != 'x')
+                            {
+                                InsertNewPiece(files[randFile], row, new Knight(color, Board));
+                                files[randFile] = 'x';
+                                invalid = false;
+                            }
+                            else { randFile = new Random().Next(0, files.Count); }
+                        } while (invalid);
+                        break;
+                    case 'q':
+                        invalid = true;
+                        do
+                        {
+                            if (files[randFile] != 'x')
+                            {
+                                InsertNewPiece(files[randFile], row, new Queen(color, Board));
+                                files[randFile] = 'x';
+                                invalid = false;
+                            }
+                            else { randFile = new Random().Next(0, files.Count); }
+                        } while (invalid);
+                        break;
+                    default:
+                        break;
+                }
+            }
 
         }
 
@@ -146,9 +263,9 @@ namespace Chess
          */
         private Piece GetKing(Color color)
         {
-            foreach( Piece c in GamePieces(color))
+            foreach (Piece c in GamePieces(color))
             {
-                if(c is King)
+                if (c is King)
                 {
                     return c;
                 }
@@ -175,9 +292,9 @@ namespace Chess
             Piece king = GetKing(color);
 
             if (king == null)
-                throw new GameBoardException("There is not a " + color + " king on the game board." );
+                throw new GameBoardException("There is not a " + color + " king on the game board.");
 
-            foreach(Piece x in GamePieces(Opponent(color)))
+            foreach (Piece x in GamePieces(Opponent(color)))
             {
                 bool[,] m = x.GetPossibleMoves();
                 if (m[king.Position.Row, king.Position.Column])
@@ -192,22 +309,22 @@ namespace Chess
             if (!IsInCheck(color))
                 return false;
 
-            foreach(Piece x in GamePieces(color))
+            foreach (Piece x in GamePieces(color))
             {
                 bool[,] m = x.GetPossibleMoves();
 
-                for(int i = 0; i < this.Board.Rows; i++)
+                for (int i = 0; i < this.Board.Rows; i++)
                 {
-                    for(int j = 0; j < this.Board.Columns; j++)
+                    for (int j = 0; j < this.Board.Columns; j++)
                     {
-                        if(m[i, j])
+                        if (m[i, j])
                         {
                             Position from = x.Position;
                             Position to = new Position(i, j);
                             Piece captured = Move(from, to);
                             bool check = IsInCheck(color);
                             UndoMove(from, to, captured);
-                            
+
                             if (!check)
                                 return false;
                         }
@@ -223,8 +340,9 @@ namespace Chess
         {
             HashSet<Piece> aux = new HashSet<Piece>();
 
-            foreach (Piece p in this._captured){
-                if(p.Color == color)
+            foreach (Piece p in this._captured)
+            {
+                if (p.Color == color)
                 {
                     aux.Add(p);
                 }
@@ -295,13 +413,13 @@ namespace Chess
             }
 
             /*** En Passant ***/
-            if(p is Pawn)
+            if (p is Pawn)
             {
-                if(from.Column != to.Column && captured == null)
+                if (from.Column != to.Column && captured == null)
                 {
                     Position posP;
 
-                    if(p.Color == Color.White)
+                    if (p.Color == Color.White)
                     {
                         posP = new Position(to.Row + 1, to.Column);
                     }
@@ -334,7 +452,7 @@ namespace Chess
             Piece p = this.Board.GetPiece(to);
 
             /*** Promotion ***/
-            if(p is Pawn)
+            if (p is Pawn)
             {
                 if ((p.Color == Color.White && to.Row == 0) ||
                    (p.Color == Color.Black && to.Row == 7))
@@ -373,11 +491,11 @@ namespace Chess
                                 wrong = false;
                                 break;
 
-                            case "Q": 
+                            case "Q":
                                 np = new Queen(p.Color, this.Board);
                                 wrong = false;
                                 break;
-                            
+
                             default:
                                 Console.WriteLine("Invalid Piece!" + "\nPress enter to continue...");
                                 Console.ReadLine();
@@ -388,7 +506,7 @@ namespace Chess
 
                     this.Board.InsertPiece(np, to);
                     this._pieces.Add(np);
-                                        
+
                 }
             }
 
@@ -420,14 +538,14 @@ namespace Chess
 
         public void UndoMove(Position from, Position to, Piece captured)
         {
-            
+
             Piece p = this.Board.RemovePiece(to);
             p.DecreaseMoveCounter();
 
             if (captured != null)
             {
                 this.Board.InsertPiece(captured, to);
-                this._captured.Remove(captured);            
+                this._captured.Remove(captured);
             }
             this.Board.InsertPiece(p, from);
 
@@ -452,14 +570,14 @@ namespace Chess
             }
 
             /*** En Passant ***/
-            if(p is Pawn)
+            if (p is Pawn)
             {
-                if(from.Column != to.Column && captured == this.EnPassant)
+                if (from.Column != to.Column && captured == this.EnPassant)
                 {
                     Piece pawn = this.Board.GetPiece(to);
                     Position posP;
 
-                    if(p.Color == Color.White)
+                    if (p.Color == Color.White)
                         posP = new Position(3, to.Column);
                     else
                         posP = new Position(3, to.Column);
@@ -480,14 +598,14 @@ namespace Chess
             if (p == null)
                 throw new GameBoardException("There is no piece in the chosen position!");
 
-            if(p.Color != this.CurrentPlayer)
+            if (p.Color != this.CurrentPlayer)
                 throw new GameBoardException("The piece chosen is not yours!");
 
-            if(!p.HasPossibleMoves())
+            if (!p.HasPossibleMoves())
                 throw new GameBoardException("You cannot move the chosen piece!");
         }
 
-        /* Checks if the position TO is valide
+        /* Checks if the position TO is valid
          * throws GameBoardException
          * @param Position from, Position to
          */

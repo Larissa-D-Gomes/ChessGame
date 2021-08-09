@@ -2,7 +2,7 @@
 
 namespace Chess
 {
-    class Pawn : Piece
+    public class Pawn : Piece
     {
         private ChessMatch _chessMatch;
         //Constructor

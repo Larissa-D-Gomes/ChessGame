@@ -6,7 +6,7 @@ using GameBoard;
 
 namespace Chess
 {
-    class ChessMatch
+    public class ChessMatch
     {
         public Board Board { get; private set; }
         public int Turn { get; private set; }
@@ -129,16 +129,15 @@ namespace Chess
             Chess960Randomizer(8, Color.Black); // Randomize black side
         }
 
-        void Chess960Randomizer(int row, Color color)
+        private void Chess960Randomizer(int row, Color color)
         {
-
             var pcs = new char[] { 'r', 'r', 'K', 'b', 'b', 'k', 'k', 'q' };
             var files = new List<char>() { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
             int rook1File = -1;
             int rook2File = -1;
             int bishop1File = -1;
-            bool invalid = true;
             int randFile = -1;
+            bool invalid = true;
 
             foreach (char piece in pcs)
             {
@@ -160,7 +159,7 @@ namespace Chess
                             invalid = true;
                             do
                             {
-                                if (Math.Abs(randFile - rook1File) > 1 && files[randFile] != 'x')
+                                if (Math.Abs(randFile - rook1File) > 2 && files[randFile] != 'x')
                                 {
                                     InsertNewPiece(files[randFile], row, new Rook(color, Board));
                                     rook2File = randFile;
@@ -199,11 +198,12 @@ namespace Chess
                         }
                         else
                         {
-                            bool b1Odd = bishop1File % 2 == 0 ? false : true;
+                            bool isB1Odd = bishop1File % 2 != 0 ? true : false;
                             invalid = true;
                             do
                             {
-                                if (files[randFile] != 'x' && (b1Odd && randFile % 2 == 0) || (!b1Odd && randFile % 2 != 0))
+                                if ((files[randFile] != 'x') && 
+                                    ((isB1Odd && randFile % 2 == 0) || (!isB1Odd && randFile % 2 != 0)))
                                 {
                                     InsertNewPiece(files[randFile], row, new Bishop(color, Board));
                                     files[randFile] = 'x';
@@ -243,7 +243,6 @@ namespace Chess
                         break;
                 }
             }
-
         }
 
 

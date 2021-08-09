@@ -2,7 +2,7 @@
 
 namespace Chess
 {
-    class Queen : Piece
+    public class Queen : Piece
     {
         //Constructor
 

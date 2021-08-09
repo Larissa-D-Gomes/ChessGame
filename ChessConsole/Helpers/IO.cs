@@ -39,8 +39,7 @@ namespace ChessConsole.Helpers
         }
         public static ChessPosition GetMove(bool From = true)
         {
-            Console.Write(From ? "From: " : "To: ");
-            string s = Console.ReadLine();
+            string s = GetString(From ? "From: " : "To: ");
             char column = s[0];
             int row = int.Parse("" + s[1]);
             return new ChessPosition(column, row);

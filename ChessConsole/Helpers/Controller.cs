@@ -25,6 +25,8 @@ namespace ChessConsole.Helpers
             } while (selection != 0);
         }
 
+
+        // Playing a match
         private void play()
         {
             try

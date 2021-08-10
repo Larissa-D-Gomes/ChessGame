@@ -125,11 +125,10 @@ namespace Chess
         private void SetUpChess960()
         {
             SetUpRows2And7();
-            Chess960Randomizer(1, Color.White); // Randomize white side
-            Chess960Randomizer(8, Color.Black); // Randomize black side
+            Chess960Randomizer();
         }
 
-        private void Chess960Randomizer(int row, Color color)
+        private void Chess960Randomizer()
         {
             var pcs = new char[] { 'r', 'r', 'K', 'b', 'b', 'k', 'k', 'q' };
             var files = new List<char>() { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
@@ -150,7 +149,8 @@ namespace Chess
                     case 'r':
                         if (rook1File == -1)
                         {
-                            InsertNewPiece(files[randFile], row, new Rook(color, Board));
+                            InsertNewPiece(files[randFile], 1, new Rook(Color.White, Board));
+                            InsertNewPiece(files[randFile], 8, new Rook(Color.Black, Board));
                             rook1File = randFile;
                             files[randFile] = 'x';
                         }
@@ -159,9 +159,10 @@ namespace Chess
                             invalid = true;
                             do
                             {
-                                if (Math.Abs(randFile - rook1File) > 2 && files[randFile] != 'x')
+                                if (Math.Abs(randFile - rook1File) > 1 && files[randFile] != 'x')
                                 {
-                                    InsertNewPiece(files[randFile], row, new Rook(color, Board));
+                                    InsertNewPiece(files[randFile], 1, new Rook(Color.White, Board));
+                                    InsertNewPiece(files[randFile], 8, new Rook(Color.Black, Board));
                                     rook2File = randFile;
                                     files[randFile] = 'x';
                                     invalid = false;
@@ -178,7 +179,8 @@ namespace Chess
                         {
                             if (files[randFile] != 'x' && (randFile > rook1File && randFile < rook2File) || (randFile > rook2File && randFile < rook1File))
                             {
-                                InsertNewPiece(files[randFile], row, new King(color, Board, this));
+                                InsertNewPiece(files[randFile], 1, new King(Color.White, Board, this));
+                                InsertNewPiece(files[randFile], 8, new King(Color.Black, Board, this));
                                 files[randFile] = 'x';
                                 invalid = false;
                             }
@@ -191,7 +193,8 @@ namespace Chess
                         {
                             if (files[randFile] != 'x')
                             {
-                                InsertNewPiece(files[randFile], row, new Bishop(color, Board));
+                                InsertNewPiece(files[randFile], 1, new Bishop(Color.White, Board));
+                                InsertNewPiece(files[randFile], 8, new Bishop(Color.Black, Board));
                                 bishop1File = randFile;
                                 files[randFile] = 'x';
                             }
@@ -205,7 +208,8 @@ namespace Chess
                                 if ((files[randFile] != 'x') && 
                                     ((isB1Odd && randFile % 2 == 0) || (!isB1Odd && randFile % 2 != 0)))
                                 {
-                                    InsertNewPiece(files[randFile], row, new Bishop(color, Board));
+                                    InsertNewPiece(files[randFile], 1, new Bishop(Color.White, Board));
+                                    InsertNewPiece(files[randFile], 8, new Bishop(Color.Black, Board));
                                     files[randFile] = 'x';
                                     invalid = false;
                                 }
@@ -219,7 +223,8 @@ namespace Chess
                         {
                             if (files[randFile] != 'x')
                             {
-                                InsertNewPiece(files[randFile], row, new Knight(color, Board));
+                                InsertNewPiece(files[randFile], 1, new Knight(Color.White, Board));
+                                InsertNewPiece(files[randFile], 8, new Knight(Color.Black, Board));
                                 files[randFile] = 'x';
                                 invalid = false;
                             }
@@ -232,7 +237,8 @@ namespace Chess
                         {
                             if (files[randFile] != 'x')
                             {
-                                InsertNewPiece(files[randFile], row, new Queen(color, Board));
+                                InsertNewPiece(files[randFile], 1, new Queen(Color.White, Board));
+                                InsertNewPiece(files[randFile], 8, new Queen(Color.Black, Board));
                                 files[randFile] = 'x';
                                 invalid = false;
                             }

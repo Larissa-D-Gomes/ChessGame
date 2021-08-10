@@ -2,7 +2,7 @@
 
 namespace GameBoard
 {
-    class Board
+    public class Board
     {
         public int Rows { get; set; }
         public int Columns { get; set; }
@@ -95,5 +95,6 @@ namespace GameBoard
             if (!IsValid(pos))
                 throw new GameBoardException("Invalid position!");
         }
+
     }
 }

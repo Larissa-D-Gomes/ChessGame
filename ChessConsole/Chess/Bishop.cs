@@ -2,7 +2,7 @@
 
 namespace Chess
 {
-    class Bishop : Piece
+    public class Bishop : Piece
     {
         //Constructor
 

@@ -1,7 +1,7 @@
 ﻿using GameBoard;
 namespace Chess
 {
-    class Rook : Piece
+    public class Rook : Piece
     {
         //Constructor
 

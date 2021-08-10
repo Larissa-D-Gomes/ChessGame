@@ -2,7 +2,7 @@
 
 namespace Chess
 {
-    class King : Piece
+    public class King : Piece
     {
         private ChessMatch _match;
         //Constructor
